@@ -25,11 +25,7 @@ inventory = {
 # Calcualte total value of inventory
 inv_total = 0
 
-for item_name in inventory:
-    item_data = inventory[item_name]
-    price = item_data["price"]
-    quantity = item_data["quantity"]
-    inv_total += price * quantity
+inv_total = sum(item["price"] * item["quantity"] for item in inventory.values())
     
 
 
@@ -47,7 +43,7 @@ print(f"       --Total Value: ${inv_total:.2f} ")
 
 
 # Search inventory
-search = input("\nLook up item: ").lower()
+search = input("\nLook up item: ").strip().lower()
 
 inventory_find = inventory.get(search) # .get() returns None if not found
 
@@ -61,7 +57,13 @@ if inventory_find:
     update = input("Update Quantity? yes or no ")
     if update == "yes":
         inv_update = int(input("Enter amount to add or subtract (eg. 3 or -3): "))
-        inventory_find["quantity"] += inv_update
+        
+# allows updates to quantity and handles negative inventory edge cases
+        new_qty = inventory_find["quantity"] + inv_update
+        if new_qty < 0:
+            print("Cannot have negative inventory. Please run program again.")
+        else:
+            inventory_find["quantity"] = new_qty
         # print updated quantity
         print(f"Qty: {inventory_find['quantity']}")
         
